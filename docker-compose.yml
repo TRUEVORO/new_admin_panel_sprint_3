@@ -24,8 +24,8 @@ services:
   etl:
     restart: always
     build:
-      context: ./etl
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./etl/Dockerfile
     depends_on:
       - elasticsearch
       - redis
