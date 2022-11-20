@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+
+  elasticsearch:
+    build:
+      context: ./es
+      dockerfile: Dockerfile
+      args:
+        DISCOVERY_TYPE: single-node
+    ports:
+      - '9200:9200'
+    volumes:
+      - elasticdata:/usr/share/elasticsearch/data
+
+  redis:
+    image: redis:6-alpine
+    restart: always
+    volumes:
+      - redisdata:/data
+    ports:
+      - '6379:6379'
+
+  etl:
+    restart: always
+    build:
+      context: ./etl
+      dockerfile: Dockerfile
+    depends_on:
+      - elasticsearch
+      - redis
+    env_file:
+      - ./postgres_to_es/.env
+
+
+volumes:
+  elasticdata:
+  redisdata:
