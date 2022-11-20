@@ -22,11 +22,11 @@ def get_movies_query(load_from: str | None) -> str:
     ORDER BY GREATEST(film.updated_at, MAX(person.updated_at), MAX(genre.updated_at)) ASC
     """
 
+
 def get_genres_query(load_from: str | None) -> str:
     """
     Формирует sql запрос с подставленной временной меткой для индекса genres
     """
-
     return f"""
     SELECT genre.id,
         genre.name,

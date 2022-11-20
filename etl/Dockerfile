@@ -33,7 +33,7 @@ COPY --from=builder /usr/src/movies_db/wheels /wheels
 COPY --from=builder /usr/src/movies_db/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
-COPY ./entrypoint.sh .
+COPY ./etl/entrypoint.sh .
 RUN sed -i "s/\r$//g"  $APP_HOME/entrypoint.sh \
     && chmod +x  $APP_HOME/entrypoint.sh
 
