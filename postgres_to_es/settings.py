@@ -74,6 +74,7 @@ def backoff(start_sleep_time: float = 0.1, factor: int = 2, border_sleep_time: i
                 try:
                     return func(*args, **kwargs)
                 except ETLError:
+                    logger.exception('Error while transferring data')
                     sleep_time = min(sleep_time * 2**factor, border_sleep_time)
         return inner
 

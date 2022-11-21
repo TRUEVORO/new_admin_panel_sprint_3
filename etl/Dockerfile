@@ -37,11 +37,10 @@ COPY ./etl/entrypoint.sh .
 RUN sed -i "s/\r$//g"  $APP_HOME/entrypoint.sh \
     && chmod +x  $APP_HOME/entrypoint.sh
 
-COPY . $APP_HOME
+COPY ../postgres_to_es $APP_HOME
 
 RUN chown -R movies_db:movies_db $APP_HOME
 
 USER movies_db
 
 ENTRYPOINT ["/home/movies_db/etl/entrypoint.sh"]
-CMD ["python", "main.py"]
