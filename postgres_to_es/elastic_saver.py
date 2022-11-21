@@ -11,8 +11,8 @@ from state import State
 logger = logging.getLogger(__name__)
 
 
-class ElasticLoader:
-    def __init__(self, config: ElasticConfig, state: State, elastic_connection: Elasticsearch | None):
+class ElasticSaver:
+    def __init__(self, config: ElasticConfig, state: State, elastic_connection: Elasticsearch | None = None):
         self._config = config
         self._elastic_connection = elastic_connection
         self._state = state
@@ -20,7 +20,7 @@ class ElasticLoader:
     @property
     def elastic_connection(self) -> Elasticsearch:
         """Вернуть текущее подключение для ES или инициализировать новое"""
-        if not any((self._elastic_connection, self._elastic_connection.ping())):
+        if self._elastic_connection is None or not self._elastic_connection.ping():
             self._elastic_connection = self._create_connection()
 
         return self._elastic_connection  # type: ignore

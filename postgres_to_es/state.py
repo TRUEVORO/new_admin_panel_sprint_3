@@ -19,7 +19,7 @@ class State:
 
 
 class RedisState(State):
-    def __init__(self, config: RedisConfig, redis_conn: Redis | None):
+    def __init__(self, config: RedisConfig, redis_conn: Redis | None = None):
         self._config = config
         self._redis_connection = redis_conn
 
@@ -27,17 +27,17 @@ class RedisState(State):
     def check_connection_status(redis_connection: Redis) -> bool:
         try:
             redis_connection.ping()
-        except ConnectionError:
+        except AttributeError:
             return False
         return True
 
     @backoff()
     def _create_connection(self) -> Redis:
-        return Redis(**self._config.dict())
+        return Redis(self._config.dict().get('redis_host'), self._config.dict().get('redis_port'))
 
     @property
     def redis_connection(self) -> Redis:
-        if not any((self._redis_connection, self.check_connection_status(self._redis_connection))):
+        if not self._redis_connection or not self.check_connection_status(self._redis_connection):
             self._redis_connection = self._create_connection()
         return self._redis_connection
 
@@ -46,5 +46,6 @@ class RedisState(State):
         self.redis_connection.set(key, value.encode())
 
     @backoff()
-    def get_state(self, key: str) -> dict | None:
-        return self.redis_connection.get(key).decode() if self.redis_connection.get(key) is not None else None
+    def get_state(self, key: str, default: any) -> dict | None:
+        state = self.redis_connection.get(key)
+        return state.decode() if state else default

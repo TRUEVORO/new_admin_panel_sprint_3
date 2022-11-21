@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$DB_NAME" = "movies_database" ]
+if [ "$DB_NAME" = "postgres" ]
 then
     echo "Launch movies database."
 
@@ -8,7 +8,9 @@ then
       sleep 0.1
     done
 
-    echo "Movies database launced"
+    echo "Movies database launched"
 fi
+
+python main.py
 
 exec "$@"

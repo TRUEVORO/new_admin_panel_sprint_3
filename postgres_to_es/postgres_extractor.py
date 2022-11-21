@@ -20,7 +20,7 @@ class PostgresExtractor:
     def __init__(
         self,
         dsn: PostgresDsn,
-        postgres_connection: _connection | None,
+        postgres_connection: _connection | None = None,
     ):
         self._dsn = dsn
         self._postgres_connection = postgres_connection
@@ -28,7 +28,7 @@ class PostgresExtractor:
     @property
     def postgres_connection(self) -> _connection:
         """Создает новый объект сессии, если он еще не инициализирован либо закрыт"""
-        if not any((self._postgres_connection, self._postgres_connection.closed)):
+        if self._postgres_connection is None or self._postgres_connection.closed:
             self._postgres_connection = self._create_connection()
 
         return self._postgres_connection
@@ -54,7 +54,7 @@ class PostgresExtractor:
             yield instance, str(row['updated_at'])
 
     def extract_data(self, index: str, query: str, itersize: int) -> Iterator[tuple]:
-        model = INDEX_MAPPER.get(index) if INDEX_MAPPER.get(index) is not None else BaseModel
+        model = INDEX_MAPPER.get(index) or BaseModel
 
         if model != BaseModel:
             return self._get_generator(model, query, itersize)

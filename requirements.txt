@@ -10,6 +10,7 @@ platformdirs==2.5.4
 psycopg2==2.9.5
 pydantic==1.10.2
 pyparsing==3.0.9
+python_dotenv==0.21.0
 redis==4.3.4
 tomli==2.0.1
 typing_extensions==4.4.0
