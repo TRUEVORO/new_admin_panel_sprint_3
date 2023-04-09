@@ -1,17 +1,20 @@
-THIS_FILE := $(lastword $(MAKEFILE_LIST))
-.PHONY: help run stop down destroy restart logs
-help:
-	make -pRrq  -f $(THIS_FILE) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
-run:
-	docker-compose -f docker-compose.yml up --build -d $(c)
-stop:
-	docker-compose -f docker-compose.yml stop $(c)
-down:
-	docker-compose -f docker-compose.yml down $(c)
-destroy:
-	docker-compose -f docker-compose.yml down -v $(c)
-restart:
-	docker-compose -f docker-compose.yml stop $(c)
-	docker-compose -f docker-compose.yml up -d $(c)
-etl-logs:
-	docker-compose logs -f etl
+help: ## - Получить информацию о командах
+	@sed \
+		-e '/^[a-zA-Z0-9_\-]*:.*##/!d' \
+		-e 's/:.*##\s*/:/' \
+		-e 's/^\(.\+\):\(.*\)/$(shell tput setaf 6)\1$(shell tput sgr0):\2/' \
+		$(MAKEFILE_LIST) | column -c2 -t -s :
+
+network: ## - Создать общую сеть для сервисов
+	docker network create custom_network
+
+run: ## - Запустить docker-compose
+	docker-compose -f docker-compose.yaml up --build -d
+
+stop: ## - Остановить и удалить docker-compose
+	docker-compose -f docker-compose.yaml down
+
+clean: ## - Очистить docker
+	docker stop $$(docker ps -aq)
+	docker rm $$(docker ps -aq)
+	docker rmi $$(docker images -q)
