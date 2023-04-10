@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  etl:
+    container_name: ${PROJECT_NAME}
+    build:
+      context: ./postgres_to_es
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+    networks:
+      custom_network:
+    depends_on:
+      - elasticsearch
+      - redis
+
+  elasticsearch:
+    container_name: ${PROJECT_NAME}-elasticsearch
+    image: elasticsearch:8.7.0
+    restart: always
+    volumes:
+      - elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms2048m -Xmx2048m
+    networks:
+      custom_network:
+    ports:
+      - ${ELASTICSEARCH_PORT}:${ELASTICSEARCH_PORT}
+
+  redis:
+    container_name: ${PROJECT_NAME}-redis
+    image: redis:7.0.10-alpine
+    restart: always
+    volumes:
+      - etl-redis:/data
+    networks:
+      custom_network:
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+
+volumes:
+  elasticsearch:
+  etl-redis:
+
+networks:
+  custom_network:
+    external: True
