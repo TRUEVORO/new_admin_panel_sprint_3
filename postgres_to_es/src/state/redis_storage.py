@@ -1,5 +1,3 @@
-from pydantic import RedisDsn
-
 from clients import RedisClient
 
 from .base_storage import BaseStorage
@@ -8,10 +6,10 @@ from .base_storage import BaseStorage
 class RedisStorage(BaseStorage):
     """Redis state storage."""
 
-    def __init__(self, redis_dsn: RedisDsn) -> None:
+    def __init__(self, redis_client: RedisClient) -> None:
         """Initialize Redis storage."""
 
-        self.redis = RedisClient(redis_dsn)
+        self.redis = redis_client
 
     def save_state(self, key: str, value: str) -> None:
         """Save state in storage."""

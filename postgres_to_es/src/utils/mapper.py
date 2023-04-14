@@ -12,5 +12,5 @@ class Mapper:
 
     index: Literal['genres', 'movies', 'persons']
     table: Literal['genre', 'film_work', 'person']
-    query: SQL | property
+    query: SQL
     model: type[Genre | Movie | Person]

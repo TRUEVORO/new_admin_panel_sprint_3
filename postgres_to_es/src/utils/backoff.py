@@ -43,7 +43,7 @@ def backoff(
                     return func(*args, **kwargs)
                 except expected_exception:
                     sleep_time = min(sleep_time * 2**factor, border_sleep_time)
-                    logger.exception('Connection error, retrying in {} s'.format(sleep_time))
+                    logger.exception('Connection error, retrying in %s s', sleep_time)
 
         return inner
 

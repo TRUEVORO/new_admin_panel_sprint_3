@@ -23,3 +23,9 @@ class BaseClient(ABC):
         """Reconnect to client if no connection exists."""
 
         raise NotImplementedError
+
+    def close(self) -> None:
+        """Close client connection."""
+
+        if self.connection:
+            self.connection.close()

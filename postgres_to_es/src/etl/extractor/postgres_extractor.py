@@ -5,7 +5,6 @@ from typing import Generator
 
 from psycopg2.errors import ConnectionFailure
 from psycopg2.sql import SQL, Identifier, Placeholder
-from pydantic import PostgresDsn
 
 from clients import PostgresClient
 from state import State
@@ -18,10 +17,10 @@ logging_config.dictConfig(LOGGING_CONFIG)
 class PostgresExtractor:
     """Class for extracting data from Postgres."""
 
-    def __init__(self, postgres_dsn: PostgresDsn, state: State, mapper: Mapper, batch_size: int):
+    def __init__(self, postgres_client: PostgresClient, state: State, mapper: Mapper, batch_size: int):
         """Initialization of PostgresExtractor."""
 
-        self.client: PostgresClient = PostgresClient(postgres_dsn)
+        self.client = postgres_client
         self.state = state
         self.mapper = mapper
         self.batch_size = batch_size
@@ -37,7 +36,7 @@ class PostgresExtractor:
     def _monitor(self, previously_modified: str) -> str | None:
         """Monitor data from Postgres by modified field."""
 
-        logger.info('Monitoring new {} data'.format(self.mapper.index))
+        logger.info('Monitoring new %s data', self.mapper.index)
 
         self.client.execute(
             self.monitor_query,
@@ -56,7 +55,7 @@ class PostgresExtractor:
             previously_modified = self.state.get_state(self.mapper.index)
 
         if last_modified := self._monitor(previously_modified):
-            logger.info('Extracting new {} data'.format(self.mapper.index))
+            logger.info('Extracting new %s data', self.mapper.index)
 
             self.client.execute(
                 self.mapper.query,
