@@ -18,9 +18,13 @@ class State:
     def set_state(self, key: str, value: str) -> None:
         """Set status for a specific key."""
 
+        logging.info('Saving %s state', key)
+
         self.storage.save_state(key, value)
 
     def get_state(self, key: str) -> str | None:
         """Get status on a specific key."""
+
+        logging.info('Get current %s state', key)
 
         return self.storage.retrieve_state(key)

@@ -11,6 +11,6 @@ class ElasticsearchClient(BaseClient):
 
     @backoff(ConnectionError)
     def _reconnect(self) -> Elasticsearch:
-        """Reconnect to Elasticsearch if no connection exists."""
+        """Reconnect to Elasticsearch client if no connection exists."""
 
         return Elasticsearch(self.dsn)

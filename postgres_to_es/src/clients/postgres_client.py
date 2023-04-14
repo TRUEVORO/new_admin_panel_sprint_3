@@ -23,9 +23,17 @@ class PostgresClient(BaseClient):
 
     @backoff(ConnectionFailure)
     def _reconnect(self) -> postgres_connection:
-        """Reconnect to Postgres if no connection exists."""
+        """Reconnect to Postgres client if no connection exists."""
 
         return psycopg2.connect(self.dsn, cursor_factory=DictCursor)
+
+    def close(self) -> None:
+        """Close Postgres client connection."""
+
+        if self.cursor:
+            self.cursor.close()
+        if self.connection:
+            self.connection.close()
 
     def execute(self, query: str | bytes | Composable, *args, **kwargs) -> None:
         """Postgres client execute query."""
