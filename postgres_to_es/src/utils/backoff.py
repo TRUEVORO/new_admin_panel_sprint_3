@@ -1,4 +1,5 @@
 import logging
+import time
 from functools import wraps
 from logging import config as logging_config
 
@@ -44,6 +45,7 @@ def backoff(
                 except expected_exception:
                     sleep_time = min(sleep_time * 2**factor, border_sleep_time)
                     logger.exception('Connection error, retrying in %s s', sleep_time)
+                    time.sleep(sleep_time)
 
         return inner
 
